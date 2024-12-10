@@ -1,0 +1,44 @@
+.container {
+    padding: 20px;
+  }
+ 
+  .circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+    line-height: 40px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+ 
+  .ant-timeline-item-head-blue {
+    background-color: #1890ff;
+  }
+ 
+  .ant-timeline-item-head-yellow {
+    background-color: #faad14;
+  }
+ 
+  .ant-timeline-item-head-green {
+    background-color: #52c41a;
+  }
+ 
+  .ant-timeline-item-head-gray {
+    background-color: #d9d9d9;
+  }
+ 
+  .mt-2 {
+    margin-top: 10px;
+  }
+ 
+  .font-weight-bold {
+    font-weight: bold;
+  }
+ 
+  .text-muted {
+    color: #6c757d;
+  }
+ 
+
