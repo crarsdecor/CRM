@@ -34,7 +34,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv'; // Import dotenv
+import dotenv from 'dotenv'; 
 
 import authRoutes from './route/authRoutes.js';
 import userRoutes from './route/userRoutes.js';

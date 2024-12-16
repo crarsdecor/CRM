@@ -41,18 +41,18 @@ const Archive = () => {
 
       // Optimistically update the UI
       const updatedUsers = assignedUsers.map((user) =>
-        user._id === userId ? { ...user, archiveWebsite: newStatus } : user
+        user._id === userId ? { ...user, callDone: newStatus } : user
       );
       setAssignedUsers(updatedUsers);
 
       // API call to update the status in the backend
       await axios.put(`${apiUrl}/api/users/${userId}`, {
-        archiveWebsite: newStatus,
+        callDone: newStatus,
       });
 
-      message.success("Archive updated successfully.");
+      message.success("Call status updated successfully.");
     } catch (error) {
-      message.error("Failed to update archive. Please try again.");
+      message.error("Failed to update call status. Please try again.");
     }
   };
 
@@ -63,27 +63,20 @@ const Archive = () => {
       key: "uid",
     },
     {
-      title: "Date (Website)",
-      dataIndex: "dateWebsite",
-      key: "dateWebsite",
+      title: "Date (Amazon)",
+      dataIndex: "dateAmazon",
+      key: "dateAmazon",
       render: (date) => (date ? moment(date).format("DD-MM-YYYY") : "-"),
     },
     {
-      title: "Enrollment ID (Website)",
-      dataIndex: "enrollmentIdWebsite",
-      key: "enrollmentIdWebsite",
+      title: "Enrollment ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
     },
     {
-      title: "Archive",
-      key: "archiveWebsite",
-      render: (_, record) => (
-        <Switch
-          checked={record.archiveWebsite === "Done"}
-          onChange={() => toggleCallDone(record._id, record.archiveWebsite)}
-          checkedChildren="Done"
-          unCheckedChildren="Not Done"
-        />
-      ),
+      title: "Password",
+      dataIndex: "password",
+      key: "password",
     },
   ];
 

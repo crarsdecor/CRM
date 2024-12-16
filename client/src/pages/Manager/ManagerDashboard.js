@@ -8,11 +8,14 @@ import Main from "./WEBSITE/Main/Main";
 import Stage1Website from "./WEBSITE/Stage1/Stage1Website";
 import Stage2Website from "./WEBSITE/Stage2/Stage2Website";
 import Stage3Website from "./WEBSITE/Stage3/Stage3Website";
-import Archive from "./WEBSITE/Archive/Archive";
+// import Archive from "./WEBSITE/Archive/Archive";
 import Operations from "./AMAZON/Operations/Operations";
 import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
 import "./ManagerDashboard.css";
+// import WebsitePasswords from "./WEBSITE/Passwords/WebsitePasswords";
+import AmazonPasswords from "./AMAZON/Passwords/AmazonPasswords";
+import DashFilters from "./WEBSITE/DashFilters/DashFilters";
 
 const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
@@ -132,6 +135,15 @@ const ManagerDashboard = () => {
                     <Growth />
                   </motion.div>
                 </TabPane>
+                <TabPane tab="Passwords" key="11">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <AmazonPasswords />
+                  </motion.div>
+                </TabPane>
               </>
             )}
             {service === "WEBSITE" && (
@@ -145,7 +157,7 @@ const ManagerDashboard = () => {
                     <WebsiteDashboard />
                   </motion.div>
                 </TabPane>
-                <TabPane tab="Main" key="5">
+                <TabPane tab="Main" key="5" >
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -181,13 +193,31 @@ const ManagerDashboard = () => {
                     <Stage3Website />
                   </motion.div>
                 </TabPane>
-                <TabPane tab="Archive" key="9">
+                {/* <TabPane tab="Archive" key="9">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
                   >
                     <Archive />
+                  </motion.div>
+                </TabPane> */}
+                {/* <TabPane tab="Passwords" key="10">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <WebsitePasswords />
+                  </motion.div>
+                </TabPane> */}
+                <TabPane tab="Dash With Filters" key="12">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <DashFilters />
                   </motion.div>
                 </TabPane>
               </>
@@ -208,7 +238,7 @@ const ManagerDashboard = () => {
             fontSize: "14px",
           }}
         >
-          Crarts Decor ©2024
+          Saumic Craft ©2024
         </Text>
         <Text
           style={{

@@ -129,6 +129,16 @@ const userSchema = new Schema(
     fbaRegistration: { type: String, },
     shipmentCom: { type: String, },
     fbaLiveCom: { type: String, },
+    gmsCom: { type: String, },
+    projectedPayoutCom: { type: String, },
+    fbaCom: { type: String, },
+    accountStatusGplCom: { type: String, },
+    archiveWebsite: { type: String, },
+    archiveAmazon: { type: String, },
+    paypalIntegration: { type: String, },
+    paypalIntegrationDate: { type: String, },
+    shiftToAmazon: { type: String, },
+    refunded: { type: String, },
 
     // for manager 
     service: { type: String, },
