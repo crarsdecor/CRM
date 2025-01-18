@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Tabs, Button, Spin, Layout, Typography, Space } from "antd";
+import AmazonPasswords from "./AMAZON/Passwords/AmazonPasswords";
 import { LogoutOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import AmazonDashboard from "./AMAZON/AmazonDashboard";
