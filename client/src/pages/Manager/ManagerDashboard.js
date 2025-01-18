@@ -8,13 +8,12 @@ import Main from "./WEBSITE/Main/Main";
 import Stage1Website from "./WEBSITE/Stage1/Stage1Website";
 import Stage2Website from "./WEBSITE/Stage2/Stage2Website";
 import Stage3Website from "./WEBSITE/Stage3/Stage3Website";
-// import Archive from "./WEBSITE/Archive/Archive";
+import Archive from "./WEBSITE/Archive/Archive";
 import Operations from "./AMAZON/Operations/Operations";
 import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
 import "./ManagerDashboard.css";
 
-const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
@@ -22,7 +21,6 @@ const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const ManagerDashboard = () => {
   const [service, setService] = useState(null);
-  console.log(service);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -73,6 +71,132 @@ const ManagerDashboard = () => {
     );
   }
 
+  const tabsItems =
+    service === "Amazon"
+      ? [
+          {
+            label: "Amazon",
+            key: "1",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <AmazonDashboard />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Operations",
+            key: "2",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Operations />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Growth",
+            key: "3",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Growth />
+              </motion.div>
+            ),
+          },
+        ]
+      : service === "WEBSITE"
+      ? [
+          {
+            label: "Website",
+            key: "4",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <WebsiteDashboard />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Main",
+            key: "5",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Main />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Stage 1 (WEBSITE)",
+            key: "6",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Stage1Website />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Stage 2 (WEBSITE)",
+            key: "7",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Stage2Website />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Stage 3 (WEBSITE)",
+            key: "8",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Stage3Website />
+              </motion.div>
+            ),
+          },
+          {
+            label: "Archive",
+            key: "9",
+            children: (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Archive />
+              </motion.div>
+            ),
+          },
+        ]
+      : [];
+
   return (
     <Layout style={{ minHeight: "100vh", background: "#f4f4f4" }}>
       <motion.div
@@ -116,155 +240,39 @@ const ManagerDashboard = () => {
           transition={{ duration: 0.6 }}
         >
           <Tabs
-            defaultActiveKey="1"
+            defaultActiveKey={tabsItems[0]?.key || "1"}
             tabBarStyle={{ marginBottom: "24px" }}
             size="large"
-          >
-            {service === "Amazon" && (
-              <>
-                <TabPane tab="Amazon" key="1">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <AmazonDashboard />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Operations" key="2">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Operations />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Growth" key="3">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Growth />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Passwords" key="11">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <AmazonPasswords />
-                  </motion.div>
-                </TabPane>
-              </>
-            )}
-            {service === "WEBSITE" && (
-              <>
-                <TabPane tab="Website" key="4">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <WebsiteDashboard />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Main" key="5" >
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Main />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Stage 1 (WEBSITE)" key="6">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Stage1Website />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Stage 2 (WEBSITE)" key="7">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Stage2Website />
-                  </motion.div>
-                </TabPane>
-                <TabPane tab="Stage 3 (WEBSITE)" key="8">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Stage3Website />
-                  </motion.div>
-                </TabPane>
-                {/* <TabPane tab="Archive" key="9">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Archive />
-                  </motion.div>
-                </TabPane> */}
-                {/* <TabPane tab="Passwords" key="10">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <WebsitePasswords />
-                  </motion.div>
-                </TabPane> */}
-                <TabPane tab="Dash With Filters" key="12">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <DashFilters />
-                  </motion.div>
-                </TabPane>
-              </>
-            )}
-          </Tabs>
+            items={tabsItems}
+          />
         </motion.div>
       </Content>
       <Footer
-      style={{
-        textAlign: "center",
-      }}
-    >
-      <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
-        <Text
-          style={{
-            color: "#001529",
-            fontWeight: "500",
-            fontSize: "14px",
-          }}
-        >
-          Crarts Decor ©2024
-        </Text>
-        <Text
-          style={{
-            color: "#1890ff",
-            fontWeight: "500",
-            fontSize: "14px",
-          }}
-        >
-          Powered by CreativeAvi
-        </Text>
-      </Space>
-    </Footer>
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
+          <Text
+            style={{
+              color: "#001529",
+              fontWeight: "500",
+              fontSize: "14px",
+            }}
+          >
+            Saumic Craft ©2024
+          </Text>
+          <Text
+            style={{
+              color: "#1890ff",
+              fontWeight: "500",
+              fontSize: "14px",
+            }}
+          >
+            Powered by
+          </Text>
+        </Space>
+      </Footer>
     </Layout>
   );
 };

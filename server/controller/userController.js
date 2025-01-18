@@ -1,5 +1,4 @@
-import { User, ROLES } from '../model/userModel.js';
-
+import { User, ROLES } from "../model/userModel.js";
 
 // export const createUser = async (req, res) => {
 //   try {
@@ -110,8 +109,6 @@ export const createUser = async (req, res) => {
   }
 };
 
-
-
 // Get all users or filter by role
 // export const getUsers = async (req, res) => {
 //   try {
@@ -124,7 +121,6 @@ export const createUser = async (req, res) => {
 //     res.status(500).json({ message: error.message });
 //   }
 // };
-
 
 export const getUsers = async (req, res) => {
   try {
@@ -203,15 +199,13 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-
-
 // Get a user by ID to check service type (Amazon or Website)
 export const getUserById = async (req, res) => {
   try {
     const { userId } = req.params; // Extract userId from request parameters
 
     // Find user by ObjectId
-    const user = await User.findById(userId).populate('managers', 'name email'); // Populate managers if needed
+    const user = await User.findById(userId).populate("managers", "name email"); // Populate managers if needed
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
