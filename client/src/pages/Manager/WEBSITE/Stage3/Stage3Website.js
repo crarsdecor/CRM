@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message } from "antd";
+import { Table, Spin, message, Col, Row, Button, Input } from "antd";
 import axios from "axios";
 import Stage3PaymentModal from "./Stage3PaymentModal";
 import ServerpurchaseModal from "./ServerpurchaseModal";
@@ -9,14 +9,22 @@ import WebsiteuploadedModal from "./WebsiteuploadedModal";
 import IdandpassModal from "./IdandpassModal";
 import ReadytohandoverModal from "./ReadytohandoverModal";
 import Stage3CompletionModal from "./Stage3CompletionModal";
+import PaypalIntegrationModal from "./PaypalIntegrationModal";
+import PaymentGatewayModal from "./PaymentGatewayModal";
+import LetterOfCompletionModal from "./LetterOfCompletionModal";
 
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
-const Stage1Website = () => {
+const Stage3Website = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalState, setModalState] = useState({ visible: false, type: null });
+  
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [minEnrollmentId, setMinEnrollmentId] = useState("");
+  const [maxEnrollmentId, setMaxEnrollmentId] = useState("");
+  const [batchWebsite, setBatchWebsite] = useState("");
 
   useEffect(() => {
     const fetchAssignedUsers = async () => {
@@ -31,6 +39,7 @@ const Stage1Website = () => {
 
         const { data } = await axios.get(`${apiUrl}/api/users?managerId=${manager.id}`);
         setAssignedUsers(data);
+        setFilteredUsers(data); // Initialize filtered users
       } catch (error) {
         message.error("Failed to fetch assigned users.");
       } finally {
@@ -56,6 +65,34 @@ const Stage1Website = () => {
     );
   };
 
+  const handleSearch = () => {
+    const filterByRange = (user) => {
+      const id = parseInt(user.enrollmentIdWebsite.replace(/[^0-9]/g, ""), 10);
+      const min = minEnrollmentId ? parseInt(minEnrollmentId.replace(/[^0-9]/g, ""), 10) : null;
+      const max = maxEnrollmentId ? parseInt(maxEnrollmentId.replace(/[^0-9]/g, ""), 10) : null;
+
+      return (
+        (!min || id >= min) &&
+        (!max || id <= max)
+      );
+    };
+
+    const filterByBatch = (user) =>
+      !batchWebsite || user.batchWebsite?.toLowerCase().includes(batchWebsite.toLowerCase());
+
+    const filtered = assignedUsers.filter(
+      (user) => filterByRange(user) && filterByBatch(user)
+    );
+    setFilteredUsers(filtered);
+  };
+
+  const resetFilters = () => {
+    setMinEnrollmentId("");
+    setMaxEnrollmentId("");
+    setBatchWebsite("");
+    setFilteredUsers(assignedUsers);
+  };
+
   const columns = [
     {
         title: "Enrollment ID (Website)",
@@ -63,6 +100,22 @@ const Stage1Website = () => {
         key: "enrollmentIdWebsite",
         fixed: "left",
         width: 200,
+      },
+      {
+        title: "Stage 1 Payment",
+        key: "stage1payment",
+        render: (_, record) => (
+          <a
+            onClick={() => handleModalOpen(record, "stage1payment")}
+            style={{
+              backgroundColor: record.stage1?.status === "Done" ? "#d4edda" : "inherit",
+              padding: "5px 10px",
+              borderRadius: "5px",
+            }}
+          >
+            {record.stage1?.status || "Not Set"}
+          </a>
+        ),
       },
     {
         title: "Stage 3 Payment",
@@ -121,9 +174,37 @@ const Stage1Website = () => {
     {
       title: "Ready To Handover",
       key: "readyToHandover",
+      width: 100,
       render: (_, record) => (
         <a onClick={() => handleModalOpen(record, "readyToHandover")}>
           {record.readyToHandover || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "Paypal Integration",
+      key: "paypalIntegration",
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "paypalIntegration")}>
+          {record.paypalIntegration || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "Payment Gateway 1",
+      key: "paymentGateway",
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "paymentGateway")}>
+          {record.paymentGateway || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "Letter Of Completion",
+      key: "letterOfCompletion",
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "letterOfCompletion")}>
+          {record.letterOfCompletion || "Not Set"}
         </a>
       ),
     },
@@ -148,8 +229,39 @@ const Stage1Website = () => {
 
   return (
     <div style={{ padding: "24px" }}>
+      <Row gutter={16} style={{ marginBottom: "16px" }}>
+        <Col span={6}>
+          <Input
+            placeholder="Min Enrollment ID"
+            value={minEnrollmentId}
+            onChange={(e) => setMinEnrollmentId(e.target.value)}
+          />
+        </Col>
+        <Col span={6}>
+          <Input
+            placeholder="Max Enrollment ID"
+            value={maxEnrollmentId}
+            onChange={(e) => setMaxEnrollmentId(e.target.value)}
+          />
+        </Col>
+        <Col span={6}>
+          <Input
+            placeholder="Batch Website"
+            value={batchWebsite}
+            onChange={(e) => setBatchWebsite(e.target.value)}
+          />
+        </Col>
+        <Col span={6}>
+          <Button type="primary" onClick={handleSearch}>
+            Search
+          </Button>
+          <Button onClick={resetFilters} style={{ marginLeft: "8px" }}>
+            Reset
+          </Button>
+        </Col>
+      </Row>
       <Table
-        dataSource={assignedUsers}
+        dataSource={filteredUsers}
         columns={columns}
         rowKey="_id"
         bordered
@@ -212,6 +324,30 @@ const Stage1Website = () => {
           onUpdate={handleUpdateUser}
         />
       )}
+      {modalState.visible && modalState.type === "paypalIntegration" && selectedUser && (
+        <PaypalIntegrationModal
+          user={selectedUser}
+          visible={modalState.visible}
+          onClose={handleModalClose}
+          onUpdate={handleUpdateUser}
+        />
+      )}
+      {modalState.visible && modalState.type === "paymentGateway" && selectedUser && (
+        <PaymentGatewayModal
+          user={selectedUser}
+          visible={modalState.visible}
+          onClose={handleModalClose}
+          onUpdate={handleUpdateUser}
+        />
+      )}
+      {modalState.visible && modalState.type === "letterOfCompletion" && selectedUser && (
+        <LetterOfCompletionModal
+          user={selectedUser}
+          visible={modalState.visible}
+          onClose={handleModalClose}
+          onUpdate={handleUpdateUser}
+        />
+      )}
       {modalState.visible && modalState.type === "stage3Completion" && selectedUser && (
         <Stage3CompletionModal
           user={selectedUser}
@@ -224,4 +360,4 @@ const Stage1Website = () => {
   );
 };
 
-export default Stage1Website;
+export default Stage3Website;

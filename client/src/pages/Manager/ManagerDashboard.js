@@ -8,12 +8,11 @@ import Main from "./WEBSITE/Main/Main";
 import Stage1Website from "./WEBSITE/Stage1/Stage1Website";
 import Stage2Website from "./WEBSITE/Stage2/Stage2Website";
 import Stage3Website from "./WEBSITE/Stage3/Stage3Website";
-import Archive from "./WEBSITE/Archive/Archive";
+// import Archive from "./WEBSITE/Archive/Archive";
 import Operations from "./AMAZON/Operations/Operations";
 import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
 import "./ManagerDashboard.css";
-import { MenuItems } from "@headlessui/react";
 
 const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
@@ -150,6 +149,15 @@ const ManagerDashboard = () => {
                     <Growth />
                   </motion.div>
                 </TabPane>
+                <TabPane tab="Passwords" key="11">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <AmazonPasswords />
+                  </motion.div>
+                </TabPane>
               </>
             )}
             {service === "WEBSITE" && (
@@ -163,7 +171,7 @@ const ManagerDashboard = () => {
                     <WebsiteDashboard />
                   </motion.div>
                 </TabPane>
-                <TabPane tab="Main" key="5">
+                <TabPane tab="Main" key="5" >
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -199,13 +207,31 @@ const ManagerDashboard = () => {
                     <Stage3Website />
                   </motion.div>
                 </TabPane>
-                <TabPane tab="Archive" key="9">
+                {/* <TabPane tab="Archive" key="9">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
                   >
                     <Archive />
+                  </motion.div>
+                </TabPane> */}
+                {/* <TabPane tab="Passwords" key="10">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <WebsitePasswords />
+                  </motion.div>
+                </TabPane> */}
+                <TabPane tab="Dash With Filters" key="12">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <DashFilters />
                   </motion.div>
                 </TabPane>
               </>
@@ -214,32 +240,31 @@ const ManagerDashboard = () => {
         </motion.div>
       </Content>
       <Footer
-        style={{
-          textAlign: "center",
-        }}
-      >
-        <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
-          <Text
-            style={{
-              color: "#001529",
-              fontWeight: "500",
-              fontSize: "14px",
-            }}
-          >
-            Saumic Craft ©2024
-          </Text>
-          <Text
-            style={{
-              color: "#1890ff",
-              fontWeight: "500",
-              fontSize: "14px",
-            }}
-          >
-            Powered by <span className="text-red-600 font-bold">&hearts;</span>{" "}
-            MFA
-          </Text>
-        </Space>
-      </Footer>
+      style={{
+        textAlign: "center",
+      }}
+    >
+      <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
+        <Text
+          style={{
+            color: "#001529",
+            fontWeight: "500",
+            fontSize: "14px",
+          }}
+        >
+          Crarts Decor ©2024
+        </Text>
+        <Text
+          style={{
+            color: "#1890ff",
+            fontWeight: "500",
+            fontSize: "14px",
+          }}
+        >
+          Powered by CreativeAvi
+        </Text>
+      </Space>
+    </Footer>
     </Layout>
   );
 };
