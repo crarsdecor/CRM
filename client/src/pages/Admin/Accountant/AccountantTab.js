@@ -38,7 +38,6 @@ const AccountantTab = () => {
 
   return (
     <div>
-      <h2>Accountant Management</h2>
       <Button
         type="primary"
         style={{ marginBottom: 20 }}

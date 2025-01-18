@@ -80,11 +80,11 @@ const In = () => {
     },
     {
         title: "Legality",
-        key: "legality",
+        key: "legalityAmazon",
         width: 100,
         render: (_, record) => (
           <a onClick={() => handleModalOpen(record, "legality")}>
-            {record.legality || "Not Set"}
+            {record.legalityAmazon || "Not Set"}
           </a>
         ),
       },

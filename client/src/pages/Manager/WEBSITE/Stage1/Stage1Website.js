@@ -90,10 +90,10 @@ const Stage1Website = () => {
       },      
     {
       title: "Legality",
-      key: "legality",
+      key: "legalityWebsite",
       render: (_, record) => (
         <a onClick={() => handleModalOpen(record, "legality")}>
-          {record.legality || "Not Set"}
+          {record.legalityWebsite || "Not Set"}
         </a>
       ),
     },

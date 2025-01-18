@@ -167,7 +167,6 @@ const UserTab = () => {
 
   return (
     <div>
-      <h2>User Management</h2>
       <div style={{ marginBottom: 20 }}>
         <Button
           type="primary"

@@ -13,6 +13,7 @@ import Operations from "./AMAZON/Operations/Operations";
 import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
 import "./ManagerDashboard.css";
+import { MenuItems } from "@headlessui/react";
 
 const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
@@ -22,6 +23,7 @@ const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const ManagerDashboard = () => {
   const [service, setService] = useState(null);
+  console.log(service);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,7 +54,9 @@ const ManagerDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      >
         <Spin size="large" />
       </div>
     );
@@ -60,7 +64,9 @@ const ManagerDashboard = () => {
 
   if (error) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      >
         <Title level={4} type="danger">
           {error}
         </Title>
@@ -71,26 +77,38 @@ const ManagerDashboard = () => {
   return (
     <Layout style={{ minHeight: "100vh", background: "#f4f4f4" }}>
       <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="header-container"
-    >
-      <div className="header-content">
-        <Title level={3} style={{ color: "#fff", margin: 0, textShadow: "2px 2px 4px rgba(0,0,0,0.6)" }}>
-          Manager Dashboard
-        </Title>
-        <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
-          Logout
-        </Button>
-      </div>
-    </motion.div>
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="header-container"
+      >
+        <div className="header-content">
+          <Title
+            level={3}
+            style={{
+              color: "#fff",
+              margin: 0,
+              textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
+            }}
+          >
+            Manager Dashboard
+          </Title>
+          <Button
+            type="primary"
+            danger
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </div>
+      </motion.div>
       <Content
         style={{
           padding: "24px",
           width: "100%",
           overflowX: "auto",
-          paddingTop: "4rem"
+          paddingTop: "4rem",
         }}
       >
         <motion.div
@@ -103,7 +121,7 @@ const ManagerDashboard = () => {
             tabBarStyle={{ marginBottom: "24px" }}
             size="large"
           >
-            {service === "AMAZON" && (
+            {service === "Amazon" && (
               <>
                 <TabPane tab="Amazon" key="1">
                   <motion.div
@@ -196,34 +214,34 @@ const ManagerDashboard = () => {
         </motion.div>
       </Content>
       <Footer
-      style={{
-        textAlign: "center",
-      }}
-    >
-      <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
-        <Text
-          style={{
-            color: "#001529",
-            fontWeight: "500",
-            fontSize: "14px",
-          }}
-        >
-          Crarts Decor ©2024
-        </Text>
-        <Text
-          style={{
-            color: "#1890ff",
-            fontWeight: "500",
-            fontSize: "14px",
-          }}
-        >
-          Powered by CreativeAvi
-        </Text>
-      </Space>
-    </Footer>
+        style={{
+          textAlign: "center",
+        }}
+      >
+        <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
+          <Text
+            style={{
+              color: "#001529",
+              fontWeight: "500",
+              fontSize: "14px",
+            }}
+          >
+            Saumic Craft ©2024
+          </Text>
+          <Text
+            style={{
+              color: "#1890ff",
+              fontWeight: "500",
+              fontSize: "14px",
+            }}
+          >
+            Powered by <span className="text-red-600 font-bold">&hearts;</span>{" "}
+            MFA
+          </Text>
+        </Space>
+      </Footer>
     </Layout>
   );
 };
 
 export default ManagerDashboard;
-

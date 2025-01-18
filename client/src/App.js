@@ -1,20 +1,24 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import DashboardAdmin from './pages/Dashboard';
-import DashboardManager from './pages/Manager/ManagerDashboard';
-import Signin from './pages/signin/Signin';
-import ProtectedRoute from './ProtectedRoute';
-import UserDashboard from './pages/User/UserDashboard';
-import AccountantDashboard from './pages/Accountant/AccountantDashboard';
-import NotFound from './NotFound';
-import Unauthorized from './Unauthorized';
-
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import DashboardAdmin from "./pages/Dashboard";
+import DashboardManager from "./pages/Manager/ManagerDashboard";
+import Signin from "./pages/signin/Signin";
+import ProtectedRoute from "./ProtectedRoute";
+import UserDashboard from "./pages/User/UserDashboard";
+import AccountantDashboard from "./pages/Accountant/AccountantDashboard";
+import NotFound from "./NotFound";
+import Unauthorized from "./Unauthorized";
 
 const App = () => (
   <Router>
     <Routes>
-       {/* Redirect "/" to Signin */}
-       <Route path="/" element={<Navigate to="/signin" replace />} />
+      {/* Redirect "/" to Signin */}
+      <Route path="/" element={<Navigate to="/signin" replace />} />
 
       {/* Public route for sign-in */}
       <Route path="/signin" element={<Signin />} />
@@ -23,7 +27,7 @@ const App = () => (
       <Route
         path="/dashboard-admin"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
+          <ProtectedRoute allowedRoles={["admin"]}>
             <DashboardAdmin />
           </ProtectedRoute>
         }
@@ -33,7 +37,7 @@ const App = () => (
       <Route
         path="/dashboard-manager"
         element={
-          <ProtectedRoute allowedRoles={['manager', 'admin']}>
+          <ProtectedRoute allowedRoles={["manager", "admin"]}>
             <DashboardManager />
           </ProtectedRoute>
         }
@@ -41,7 +45,7 @@ const App = () => (
       <Route
         path="/dashboard-user"
         element={
-          <ProtectedRoute allowedRoles={['manager', 'admin', 'user']}>
+          <ProtectedRoute allowedRoles={["manager", "admin", "user"]}>
             <UserDashboard />
           </ProtectedRoute>
         }
@@ -49,7 +53,7 @@ const App = () => (
       <Route
         path="/dashboard-accountant"
         element={
-          <ProtectedRoute allowedRoles={['accountant', 'admin', ]}>
+          <ProtectedRoute allowedRoles={["accountant", "admin"]}>
             <AccountantDashboard />
           </ProtectedRoute>
         }

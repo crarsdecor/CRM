@@ -7,16 +7,16 @@ const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const LegalityModal = ({ user, visible, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(false);
-  const [legality, setLegality] = useState(false);
-  const [legalityDate, setLegalityDate] = useState(null);
-  const [legalityLink, setLegalityLink] = useState("");
+  const [legalityWebsite, setLegalityWebsite] = useState(false);
+  const [legalityWebsiteDate, setLegalityWebsiteDate] = useState(null);
+  const [legalityWebsiteLink, setLegalityWebsiteLink] = useState("");
 
   // Initialize values when the modal opens
   useEffect(() => {
     if (user) {
-      setLegality(user.legality === "Done"); // Map "Done" to true and others to false
-      setLegalityDate(user.legalityDate ? moment(user.legalityDate) : null);
-      setLegalityLink(user.legalityLink || "");
+      setLegalityWebsite(user.legalityWebsite === "Done"); // Map "Done" to true and others to false
+      setLegalityWebsiteDate(user.legalityWebsiteDate ? moment(user.legalityWebsiteDate) : null);
+      setLegalityWebsiteLink(user.legalityWebsiteLink || "");
     }
   }, [user]);
 
@@ -27,17 +27,17 @@ const LegalityModal = ({ user, visible, onClose, onUpdate }) => {
       // Optimistically update the parent
       const optimisticUser = {
         ...user,
-        legality: legality ? "Done" : "Not Done",
-        legalityDate: legalityDate ? legalityDate.toISOString() : null,
-        legalityLink,
+        legalityWebsite: legalityWebsite ? "Done" : "Not Done",
+        legalityWebsiteDate: legalityWebsiteDate ? legalityWebsiteDate.toISOString() : null,
+        legalityWebsiteLink,
       };
       onUpdate(optimisticUser);
   
       // Make the API call
       const { data } = await axios.put(`${apiUrl}/api/users/${user._id}`, {
-        legality: optimisticUser.legality,
-        legalityDate: optimisticUser.legalityDate,
-        legalityLink: optimisticUser.legalityLink,
+        legalityWebsite: optimisticUser.legalityWebsite,
+        legalityWebsiteDate: optimisticUser.legalityWebsiteDate,
+        legalityWebsiteLink: optimisticUser.legalityWebsiteLink,
       });
   
       message.success("Legality details updated successfully.");
@@ -62,8 +62,8 @@ const LegalityModal = ({ user, visible, onClose, onUpdate }) => {
       <div style={{ marginBottom: 16 }}>
         <label>Legality Status:</label>
         <Switch
-          checked={legality}
-          onChange={(checked) => setLegality(checked)}
+          checked={legalityWebsite}
+          onChange={(checked) => setLegalityWebsite(checked)}
           checkedChildren="Done"
           unCheckedChildren="Not Done"
         />
@@ -71,8 +71,8 @@ const LegalityModal = ({ user, visible, onClose, onUpdate }) => {
       <div style={{ marginBottom: 16 }}>
         <label>Legality Date:</label>
         <DatePicker
-          value={legalityDate}
-          onChange={(date) => setLegalityDate(date)}
+          value={legalityWebsiteDate}
+          onChange={(date) => setLegalityWebsiteDate(date)}
           style={{ width: "100%" }}
           placeholder="Select legality date"
         />
@@ -80,8 +80,8 @@ const LegalityModal = ({ user, visible, onClose, onUpdate }) => {
       <div>
         <label>Legality Link:</label>
         <Input
-          value={legalityLink}
-          onChange={(e) => setLegalityLink(e.target.value)}
+          value={legalityWebsiteLink}
+          onChange={(e) => setLegalityWebsiteLink(e.target.value)}
           placeholder="Enter legality link"
         />
       </div>

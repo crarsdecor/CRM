@@ -94,7 +94,6 @@ const ManagerTab = () => {
 
     return (
         <div>
-            <h2>Manager Dashboard</h2>
             <Form layout="inline" onFinish={handleCreateManager}>
                 <Form.Item name="name" rules={[{ required: true, message: 'Name is required' }]}>
                     <Input placeholder="Manager Name" />
