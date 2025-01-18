@@ -47,7 +47,9 @@ const UserDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      >
         <Spin size="large" />
       </div>
     );
@@ -55,7 +57,9 @@ const UserDashboard = () => {
 
   if (error) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      >
         <Title level={4} type="danger">
           {error}
         </Title>
@@ -72,39 +76,68 @@ const UserDashboard = () => {
         className="header-container"
       >
         <div className="header-content">
-          <Title level={3} style={{ color: "#fff", margin: 0, textShadow: "2px 2px 4px rgba(0,0,0,0.6)" }}>
+          <Title
+            level={3}
+            style={{
+              color: "#fff",
+              margin: 0,
+              textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
+            }}
+          >
             User Dashboard
           </Title>
-          <Button type="primary" danger icon={<LogoutOutlined />} onClick={handleLogout}>
+          <Button
+            type="primary"
+            danger
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+          >
             Logout
           </Button>
         </div>
       </motion.div>
-      <Content style={{ padding: "24px", width: "100%", overflowX: "auto", paddingTop: "4rem" }}>
+      <Content
+        style={{
+          padding: "24px",
+          width: "100%",
+          overflowX: "auto",
+          paddingTop: "4rem",
+        }}
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Tabs defaultActiveKey="1" tabBarStyle={{ marginBottom: "24px" }} size="large">
+          <Tabs
+            defaultActiveKey="1"
+            tabBarStyle={{ marginBottom: "24px" }}
+            size="large"
+          >
             {enrollmentIdAmazon && (
               <>
                 <TabPane tab="Amazon" key="1">
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <AmazonDashboard />
                   </motion.div>
                 </TabPane>
-               
               </>
             )}
             {enrollmentIdWebsite && (
               <>
                 <TabPane tab="Website" key="4">
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <WebsiteDashboard />
                   </motion.div>
                 </TabPane>
-               
               </>
             )}
           </Tabs>
@@ -112,8 +145,16 @@ const UserDashboard = () => {
       </Content>
       <Footer style={{ textAlign: "center" }}>
         <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
-          <Text style={{ color: "#001529", fontWeight: "500", fontSize: "14px" }}>Crarts Decor ©2024</Text>
-          <Text style={{ color: "#1890ff", fontWeight: "500", fontSize: "14px" }}>Powered by CreativeAvi</Text>
+          <Text
+            style={{ color: "#001529", fontWeight: "500", fontSize: "14px" }}
+          >
+            Crarts Decor ©2024
+          </Text>
+          <Text
+            style={{ color: "#1890ff", fontWeight: "500", fontSize: "14px" }}
+          >
+            Powered by CreativeAvi
+          </Text>
         </Space>
       </Footer>
     </Layout>
@@ -121,10 +162,6 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
-
-
-
-
 
 // import React, { useEffect, useState } from "react";
 // import { motion } from "framer-motion";
