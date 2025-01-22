@@ -131,7 +131,7 @@ const AssignedUsersTable = () => {
       key: "batchAmazon",
     },
     {
-      title: "Date",
+      title: "Date Amazon",
       dataIndex: "dateAmazon",
       key: "dateAmazon",
       render: (date) => new Date(date).toDateString(),
