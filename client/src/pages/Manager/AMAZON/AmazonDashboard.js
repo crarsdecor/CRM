@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message, Typography } from "antd";
+import { Table, Spin, message, Typography, Input } from "antd";
 import axios from "axios";
 
 const { Title } = Typography;
@@ -9,6 +9,7 @@ const apiUrl = process.env.REACT_APP_BACKEND_URL;
 const AssignedUsersTable = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchAssignedUsers = async () => {
@@ -84,6 +85,19 @@ const AssignedUsersTable = () => {
     },
   ];
 
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  // Filter the users based on the search text for uid, name, email, and enrollmentIdAmazon
+  const filteredUsers = assignedUsers.filter(
+    (user) =>
+      user.uid.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.enrollmentIdAmazon.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   if (loading) {
     return (
       <Spin
@@ -98,14 +112,23 @@ const AssignedUsersTable = () => {
       <div className="w-full pb-2 mb-4 px-4 bg-gradient-to-r from-blue-500 to-red-300 shadow-lg rounded-lg">
         <h1 className="text-2xl p-2 font-bold text-white">All Users</h1>
       </div>
-      <div className="bg-white p-4 shadow-md rounded-lg">
+      <div className="bg-white p-4 shadow-md rounded-lg mb-4">
+        <div>
+          <Input
+            placeholder="Search by UID, Name, Email, or Enrollment ID"
+            value={searchText}
+            onChange={handleSearch}
+            style={{ marginBottom: "16px", width: "30%" }}
+          />
+          <h2 className="font-bold">Total Users: {assignedUsers.length}</h2>
+        </div>
         <Table
-          dataSource={assignedUsers.map((user, index) => ({
+          dataSource={filteredUsers.map((user, index) => ({
             ...user,
             key: index, // Add a unique key for each row
           }))}
           columns={columns}
-          pagination={{ pageSize: 20 }}
+          pagination={{ pageSize: 100 }}
           bordered
         />
       </div>

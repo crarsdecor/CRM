@@ -30,7 +30,9 @@ const In = () => {
           return;
         }
 
-        const { data } = await axios.get(`${apiUrl}/api/users?managerId=${manager.id}`);
+        const { data } = await axios.get(
+          `${apiUrl}/api/users?managerId=${manager.id}`
+        );
         setAssignedUsers(data);
       } catch (error) {
         message.error("Failed to fetch assigned users.");
@@ -66,12 +68,12 @@ const In = () => {
       responsive: ["lg"],
     },
     {
-        title: "Enrollment ID (Amazon)",
-        dataIndex: "enrollmentIdAmazon",
-        key: "enrollmentIdAmazon",
-        fixed: "left",
-        width: 200,
-      },
+      title: "Enrollment ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
+      fixed: "left",
+      width: 200,
+    },
     {
       title: "Batch",
       dataIndex: "batchAmazon",
@@ -79,31 +81,31 @@ const In = () => {
       responsive: ["md"],
     },
     {
-        title: "Legality",
-        key: "legalityAmazon",
-        width: 100,
-        render: (_, record) => (
-          <a onClick={() => handleModalOpen(record, "legality")}>
-            {record.legalityAmazon || "Not Set"}
-          </a>
-        ),
-      },
-      {
-        title: "GST",
-        key: "gst",
-        render: (_, record) => (
-          <a onClick={() => handleModalOpen(record, "gst")}>
-            {record.gst || "Not Set"}
-          </a>
-        ),
-      },
-      {
-        title: "GST Number",
-        dataIndex: "gstNumber",
-        key: "gstNumber",
-        width: 120,
-        responsive: ["md"],
-      },
+      title: "Legality",
+      key: "legalityAmazon",
+      width: 100,
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "legality")}>
+          {record.legalityAmazon || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "GST",
+      key: "gst",
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "gst")}>
+          {record.gst || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "GST Number",
+      dataIndex: "gstNumber",
+      key: "gstNumber",
+      width: 120,
+      responsive: ["md"],
+    },
     {
       title: "Account Open",
       key: "accountOpenIn",
@@ -149,7 +151,7 @@ const In = () => {
       width: 140,
       render: (_, record) => (
         <a onClick={() => handleModalOpen(record, "userIDPASS")}>
-          {record.theme || "Not Set"}
+          {record.amazonIdIn || "Not Set"}
         </a>
       ),
     },
@@ -167,20 +169,29 @@ const In = () => {
       title: "Remark",
       key: "accountLaunchIn",
       width: 100,
-    //   render: (_, record) => (
-    //     <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
-    //       {record.accountLaunchIn || "Not Set"}
-    //     </a>
-    //   ),
+      render: (_, record) => (
+        <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
+          {record.accountLaunchIn || "Not Set"}
+        </a>
+      ),
     },
   ];
 
   if (loading) {
-    return <Spin size="large" style={{ display: "flex", justifyContent: "center", marginTop: "20%" }} />;
+    return (
+      <Spin
+        size="large"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      />
+    );
   }
 
   if (assignedUsers.length === 0) {
-    return <h3 style={{ textAlign: "center", marginTop: "20%" }}>No users assigned to you yet.</h3>;
+    return (
+      <h3 style={{ textAlign: "center", marginTop: "20%" }}>
+        No users assigned to you yet.
+      </h3>
+    );
   }
 
   return (
@@ -190,7 +201,8 @@ const In = () => {
         columns={columns}
         rowKey="_id"
         bordered
-        scroll={{ x: "max-content", y: 400 }}
+        scroll={{ x: "max-content", y: 800 }}
+        pagination={{ pageSize: 100 }}
         sticky
       />
       {modalState.visible && modalState.type === "legality" && selectedUser && (
@@ -209,54 +221,66 @@ const In = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "accountOpenIn" && selectedUser && (
-        <AccountOpenModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "accountStatusIn" && selectedUser && (
-        <AccountStatusModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "brandName" && selectedUser && (
-        <BrandModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "listingsIn" && selectedUser && (
-        <ListingsModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "userIDPASS" && selectedUser && (
-        <UserIdPassModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "accountLaunchIn" && selectedUser && (
-        <AccountLaunchModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "accountOpenIn" &&
+        selectedUser && (
+          <AccountOpenModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "accountStatusIn" &&
+        selectedUser && (
+          <AccountStatusModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "brandName" &&
+        selectedUser && (
+          <BrandModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "listingsIn" &&
+        selectedUser && (
+          <ListingsModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "userIDPASS" &&
+        selectedUser && (
+          <UserIdPassModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "accountLaunchIn" &&
+        selectedUser && (
+          <AccountLaunchModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
     </div>
   );
 };
