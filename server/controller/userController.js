@@ -143,6 +143,51 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const updateUserDetails = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract user ID from request params
+    const {
+      name,
+      email,
+      enrollmentIdAmazon,
+      enrollmentIdWebsite,
+      primaryContact,
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and Email are required." });
+    }
+
+    // Find the user and update details
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name,
+          email,
+          enrollmentIdAmazon,
+          enrollmentIdWebsite,
+          primaryContact,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "User details updated successfully.",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 // Update user (assign/unassign managers)
 
 export const updateUser = async (req, res) => {

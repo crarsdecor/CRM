@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message, Typography, Input } from "antd";
+import {
+  Table,
+  Spin,
+  message,
+  Typography,
+  Input,
+  Modal,
+  Form,
+  Button,
+} from "antd";
 import axios from "axios";
 
 const { Title } = Typography;
@@ -10,6 +19,9 @@ const AssignedUsersTable = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const fetchAssignedUsers = async () => {
@@ -35,6 +47,48 @@ const AssignedUsersTable = () => {
 
     fetchAssignedUsers();
   }, []);
+
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setIsModalVisible(true);
+    form.setFieldsValue({
+      name: user.name,
+      email: user.email,
+      enrollmentIdAmazon: user.enrollmentIdAmazon,
+      enrollmentIdWebsite: user.enrollmentIdWebsite,
+      primaryContact: user.primaryContact,
+    });
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setSelectedUser(null);
+    form.resetFields();
+  };
+
+  const handleFormSubmit = async (values) => {
+    try {
+      const updatedUser = { ...selectedUser, ...values };
+      await axios.put(
+        `${apiUrl}/api/users/update/${selectedUser._id}`,
+        updatedUser
+      );
+      message.success("User details updated successfully!");
+
+      // Update the local state with the edited user
+      setAssignedUsers((prev) =>
+        prev.map((user) =>
+          user.uid === selectedUser.uid ? { ...user, ...values } : user
+        )
+      );
+
+      setIsModalVisible(false);
+      setSelectedUser(null);
+      form.resetFields();
+    } catch (error) {
+      message.error("Failed to update user details.");
+    }
+  };
 
   const columns = [
     {
@@ -67,8 +121,8 @@ const AssignedUsersTable = () => {
       dataIndex: "primaryContact",
       key: "primaryContact",
       render: (contact) => {
-        if (!contact) return "N/A"; // Handle cases where contact might be null or undefined
-        return contact.replace(/\d(?=\d{4})/g, "*"); // Replace all digits except the last 4 with '*'
+        if (!contact) return "N/A";
+        return contact.replace(/\d(?=\d{4})/g, "*");
       },
     },
     {
@@ -76,12 +130,20 @@ const AssignedUsersTable = () => {
       dataIndex: "batchAmazon",
       key: "batchAmazon",
     },
-
     {
       title: "Date",
       dataIndex: "dateAmazon",
       key: "dateAmazon",
-      render: (date) => new Date(date).toDateString(), // Format the date
+      render: (date) => new Date(date).toDateString(),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, user) => (
+        <Button type="link" onClick={() => handleEdit(user)}>
+          Edit
+        </Button>
+      ),
     },
   ];
 
@@ -89,7 +151,6 @@ const AssignedUsersTable = () => {
     setSearchText(e.target.value);
   };
 
-  // Filter the users based on the search text for uid, name, email, and enrollmentIdAmazon
   const filteredUsers = assignedUsers.filter(
     (user) =>
       user.uid.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -125,13 +186,89 @@ const AssignedUsersTable = () => {
         <Table
           dataSource={filteredUsers.map((user, index) => ({
             ...user,
-            key: index, // Add a unique key for each row
+            key: index,
           }))}
           columns={columns}
           pagination={{ pageSize: 100 }}
           bordered
         />
       </div>
+
+      <Modal
+        title={
+          <h2 className="text-xl font-bold text-gray-800">Edit User Details</h2>
+        }
+        visible={isModalVisible}
+        onCancel={handleModalCancel}
+        footer={null}
+        centered
+        className="rounded-lg shadow-lg"
+        bodyStyle={{
+          backgroundColor: "#f9fafb", // Tailwind's `bg-gray-100`
+          borderRadius: "8px",
+        }}
+      >
+        <Form
+          form={form}
+          onFinish={handleFormSubmit}
+          layout="vertical"
+          className="space-y-4"
+        >
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Name</span>}
+            name="name"
+            rules={[{ required: true, message: "Name is required" }]}
+          >
+            <Input className="rounded-lg shadow-sm border-gray-300" />
+          </Form.Item>
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Email</span>}
+            name="email"
+            rules={[{ required: true, message: "Email is required" }]}
+          >
+            <Input className="rounded-lg shadow-sm border-gray-300" />
+          </Form.Item>
+          <Form.Item
+            label={
+              <span className="font-semibold text-gray-700">
+                Enrollment ID (Amazon)
+              </span>
+            }
+            name="enrollmentIdAmazon"
+          >
+            <Input className="rounded-lg shadow-sm border-gray-300" />
+          </Form.Item>
+          <Form.Item
+            label={
+              <span className="font-semibold text-gray-700">
+                Enrollment ID (Website)
+              </span>
+            }
+            name="enrollmentIdWebsite"
+          >
+            <Input className="rounded-lg shadow-sm border-gray-300" />
+          </Form.Item>
+          <Form.Item
+            label={
+              <span className="font-semibold text-gray-700">
+                Primary Contact
+              </span>
+            }
+            name="primaryContact"
+          >
+            <Input className="rounded-lg shadow-sm border-gray-300" />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
+            >
+              Save Changes
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
