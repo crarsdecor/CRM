@@ -9,7 +9,6 @@ import ProjectedPayoutModal from "./ProjectedPayoutModal";
 import CurrentSlabModal from "./CurrentSlabModal";
 import AccountStatusModal from "./AccountStatusModal";
 
-
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const GPL = () => {
@@ -29,7 +28,9 @@ const GPL = () => {
           return;
         }
 
-        const { data } = await axios.get(`${apiUrl}/api/users?managerId=${manager.id}`);
+        const { data } = await axios.get(
+          `${apiUrl}/api/users?managerId=${manager.id}`
+        );
         setAssignedUsers(data);
       } catch (error) {
         message.error("Failed to fetch assigned users.");
@@ -58,34 +59,44 @@ const GPL = () => {
 
   const columns = [
     {
-        title: "Enrollment ID (Amazon)",
-        dataIndex: "enrollmentIdAmazon",
-        key: "enrollmentIdAmazon",
-        fixed: "left",
-        width: 200,
-      },
-      {
-        title: "Brand Name",
-        key: "brandName",
-        width: 120,
-        render: (_, record) => (
-          <a onClick={() => handleModalOpen(record, "brandName")}>
-            {record.brandName || "Not Set"}
-          </a>
-        ),
-      },
-      {
-        title: "Month",
-        dataIndex: "month",
-        key: "month",
-        width: 100,
-      },
+      title: "Enrollment ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
+      fixed: "left",
+      width: 200,
+    },
+    {
+      title: "Brand Name",
+      key: "brandName",
+      width: 120,
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "brandName")}
+          style={{
+            color: record.brandName ? "green" : "red",
+          }}
+        >
+          {record.brandName || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+      width: 100,
+    },
     {
       title: "GMS",
       key: "gmsIn",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "gmsIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "gmsIn")}
+          style={{
+            color: record.gmsIn ? "green" : "red",
+          }}
+        >
           {record.gmsIn || "Not Set"}
         </a>
       ),
@@ -101,7 +112,12 @@ const GPL = () => {
       key: "projectedSlabIn",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "projectedSlabIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "projectedSlabIn")}
+          style={{
+            color: record.projectedSlabIn ? "green" : "red",
+          }}
+        >
           {record.projectedSlabIn || "Not Set"}
         </a>
       ),
@@ -111,7 +127,12 @@ const GPL = () => {
       key: "fbaIn",
       width: 120,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "fbaIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "fbaIn")}
+          style={{
+            color: record.fbaIn ? "green" : "red",
+          }}
+        >
           {record.fbaIn || "Not Set"}
         </a>
       ),
@@ -121,7 +142,12 @@ const GPL = () => {
       key: "projectedPayoutIn",
       width: 150,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "projectedPayoutIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "projectedPayoutIn")}
+          style={{
+            color: record.projectedPayoutIn ? "green" : "red",
+          }}
+        >
           {record.projectedPayoutIn || "Not Set"}
         </a>
       ),
@@ -131,7 +157,12 @@ const GPL = () => {
       key: "currentSlabIn",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "currentSlabIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "currentSlabIn")}
+          style={{
+            color: record.currentSlabIn ? "green" : "red",
+          }}
+        >
           {record.currentSlabIn || "Not Set"}
         </a>
       ),
@@ -141,7 +172,12 @@ const GPL = () => {
       key: "accountStatusGplIn",
       width: 140,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountStatusGplIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountStatusGplIn")}
+          style={{
+            color: record.accountStatusGplIn ? "green" : "red",
+          }}
+        >
           {record.accountStatusGplIn || "Not Set"}
         </a>
       ),
@@ -150,20 +186,34 @@ const GPL = () => {
       title: "Remark",
       key: "accountLaunchIn",
       width: 100,
-    //   render: (_, record) => (
-    //     <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
-    //       {record.accountLaunchIn || "Not Set"}
-    //     </a>
-    //   ),
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "accountLaunchIn")}
+          style={{
+            color: record.accountLaunchIn ? "green" : "red",
+          }}
+        >
+          {record.accountLaunchIn || "Not Set"}
+        </a>
+      ),
     },
   ];
 
   if (loading) {
-    return <Spin size="large" style={{ display: "flex", justifyContent: "center", marginTop: "20%" }} />;
+    return (
+      <Spin
+        size="large"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      />
+    );
   }
 
   if (assignedUsers.length === 0) {
-    return <h3 style={{ textAlign: "center", marginTop: "20%" }}>No users assigned to you yet.</h3>;
+    return (
+      <h3 style={{ textAlign: "center", marginTop: "20%" }}>
+        No users assigned to you yet.
+      </h3>
+    );
   }
 
   return (
@@ -173,17 +223,20 @@ const GPL = () => {
         columns={columns}
         rowKey="_id"
         bordered
-        scroll={{ x: "max-content", y: 400 }}
+        scroll={{ x: "max-content", y: 800 }}
+        pagination={{ pageSize: 100 }}
         sticky
       />
-      {modalState.visible && modalState.type === "brandName" && selectedUser && (
-        <BrandModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "brandName" &&
+        selectedUser && (
+          <BrandModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
       {modalState.visible && modalState.type === "gmsIn" && selectedUser && (
         <GmsModal
           user={selectedUser}
@@ -192,14 +245,16 @@ const GPL = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "projectedSlabIn" && selectedUser && (
-        <ProjectedSlabModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "projectedSlabIn" &&
+        selectedUser && (
+          <ProjectedSlabModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
       {modalState.visible && modalState.type === "fbaIn" && selectedUser && (
         <FbaModal
           user={selectedUser}
@@ -208,30 +263,36 @@ const GPL = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "projectedPayoutIn" && selectedUser && (
-        <ProjectedPayoutModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "currentSlabIn" && selectedUser && (
-        <CurrentSlabModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "accountStatusGplIn" && selectedUser && (
-        <AccountStatusModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "projectedPayoutIn" &&
+        selectedUser && (
+          <ProjectedPayoutModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "currentSlabIn" &&
+        selectedUser && (
+          <CurrentSlabModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "accountStatusGplIn" &&
+        selectedUser && (
+          <AccountStatusModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
     </div>
   );
 };

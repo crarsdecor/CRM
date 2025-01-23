@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message } from "antd";
+import { Table, Spin, message, Input } from "antd";
 import axios from "axios";
 import DateModal from "./DateModal";
 import BrandModal from "./BrandModal";
@@ -11,9 +11,11 @@ import SkuModal from "./SkuModal";
 import StateModal from "./StateModal";
 
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
+const { Search } = Input;
 
 const FBA = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalState, setModalState] = useState({ visible: false, type: null });
@@ -29,8 +31,11 @@ const FBA = () => {
           return;
         }
 
-        const { data } = await axios.get(`${apiUrl}/api/users?managerId=${manager.id}`);
+        const { data } = await axios.get(
+          `${apiUrl}/api/users?managerId=${manager.id}`
+        );
         setAssignedUsers(data);
+        setFilteredUsers(data); // Initialize the filtered data
       } catch (error) {
         message.error("Failed to fetch assigned users.");
       } finally {
@@ -40,6 +45,13 @@ const FBA = () => {
 
     fetchAssignedUsers();
   }, []);
+
+  const handleSearch = (value) => {
+    const filtered = assignedUsers.filter((user) =>
+      Object.values(user).join(" ").toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  };
 
   const handleModalOpen = (user, type) => {
     setSelectedUser(user);
@@ -54,6 +66,9 @@ const FBA = () => {
     setAssignedUsers((users) =>
       users.map((user) => (user._id === updatedUser._id ? updatedUser : user))
     );
+    setFilteredUsers((users) =>
+      users.map((user) => (user._id === updatedUser._id ? updatedUser : user))
+    );
   };
 
   const columns = [
@@ -62,34 +77,55 @@ const FBA = () => {
       key: "dateFbaIn",
       width: 100,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "dateFbaIn")}>
-          {record.dateFbaIn || "Not Set"}
+        <a
+          onClick={() => handleModalOpen(record, "dateFbaIn")}
+          style={{
+            color: record.dateFbaIn ? "green" : "red",
+          }}
+        >
+          {record.dateFbaIn
+            ? new Date(record.dateFbaIn).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "Not Set"}
         </a>
       ),
     },
     {
-        title: "Enrollment ID (Amazon)",
-        dataIndex: "enrollmentIdAmazon",
-        key: "enrollmentIdAmazon",
-        fixed: "left",
-        width: 200,
-      },
-      {
-        title: "Brand Name",
-        key: "brandName",
-        width: 120,
-        render: (_, record) => (
-          <a onClick={() => handleModalOpen(record, "brandName")}>
-            {record.brandName || "Not Set"}
-          </a>
-        ),
-      },
+      title: "Enrollment ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
+      fixed: "left",
+      width: 200,
+    },
+    {
+      title: "Brand Name",
+      key: "brandName",
+      width: 120,
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "brandName")}
+          style={{
+            color: record.brandName ? "green" : "red",
+          }}
+        >
+          {record.brandName || "Not Set"}
+        </a>
+      ),
+    },
     {
       title: "FBA Amount",
       key: "fbaAmountIn",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "fbaAmountIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "fbaAmountIn")}
+          style={{
+            color: record.fbaAmountIn ? "green" : "red",
+          }}
+        >
           {record.fbaAmountIn || "Not Set"}
         </a>
       ),
@@ -98,7 +134,12 @@ const FBA = () => {
       title: "State",
       key: "state",
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "state")}>
+        <a
+          onClick={() => handleModalOpen(record, "state")}
+          style={{
+            color: record.state ? "green" : "red",
+          }}
+        >
           {record.state || "Not Set"}
         </a>
       ),
@@ -108,7 +149,12 @@ const FBA = () => {
       key: "skuIn",
       width: 120,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "skuIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "skuIn")}
+          style={{
+            color: record.skuIn ? "green" : "red",
+          }}
+        >
           {record.skuIn || "Not Set"}
         </a>
       ),
@@ -118,7 +164,12 @@ const FBA = () => {
       key: "apobIn",
       width: 100,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "apobIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "apobIn")}
+          style={{
+            color: record.apobIn ? "green" : "red",
+          }}
+        >
           {record.apobIn || "Not Set"}
         </a>
       ),
@@ -128,7 +179,12 @@ const FBA = () => {
       key: "shipmentIn",
       width: 140,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "shipmentIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "shipmentIn")}
+          style={{
+            color: record.shipmentIn ? "green" : "red",
+          }}
+        >
           {record.shipmentIn || "Not Set"}
         </a>
       ),
@@ -138,7 +194,12 @@ const FBA = () => {
       key: "fbaLiveIn",
       width: 160,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "fbaLiveIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "fbaLiveIn")}
+          style={{
+            color: record.fbaLiveIn ? "green" : "red",
+          }}
+        >
           {record.fbaLiveIn || "Not Set"}
         </a>
       ),
@@ -147,56 +208,83 @@ const FBA = () => {
       title: "Remark",
       key: "accountLaunchIn",
       width: 100,
-    //   render: (_, record) => (
-    //     <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
-    //       {record.accountLaunchIn || "Not Set"}
-    //     </a>
-    //   ),
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "accountLaunchIn")}
+          style={{
+            color: record.accountLaunchIn ? "green" : "red",
+          }}
+        >
+          {record.accountLaunchIn || "Not Set"}
+        </a>
+      ),
     },
   ];
 
   if (loading) {
-    return <Spin size="large" style={{ display: "flex", justifyContent: "center", marginTop: "20%" }} />;
+    return (
+      <Spin
+        size="large"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      />
+    );
   }
 
   if (assignedUsers.length === 0) {
-    return <h3 style={{ textAlign: "center", marginTop: "20%" }}>No users assigned to you yet.</h3>;
+    return (
+      <h3 style={{ textAlign: "center", marginTop: "20%" }}>
+        No users assigned to you yet.
+      </h3>
+    );
   }
 
   return (
     <div style={{ padding: "24px" }}>
+      <Search
+        placeholder="Search users"
+        onSearch={handleSearch}
+        style={{ marginBottom: 16, width: 300 }}
+        allowClear
+      />
       <Table
-        dataSource={assignedUsers}
+        dataSource={filteredUsers}
         columns={columns}
         rowKey="_id"
         bordered
-        scroll={{ x: "max-content", y: 400 }}
+        scroll={{ x: "max-content", y: 800 }}
+        pagination={{ pageSize: 100 }}
         sticky
       />
-      {modalState.visible && modalState.type === "dateFbaIn" && selectedUser && (
-        <DateModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "brandName" && selectedUser && (
-        <BrandModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "fbaAmountIn" && selectedUser && (
-        <FbaAmountModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "dateFbaIn" &&
+        selectedUser && (
+          <DateModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "brandName" &&
+        selectedUser && (
+          <BrandModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "fbaAmountIn" &&
+        selectedUser && (
+          <FbaAmountModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
       {modalState.visible && modalState.type === "state" && selectedUser && (
         <StateModal
           user={selectedUser}
@@ -221,22 +309,26 @@ const FBA = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "shipmentIn" && selectedUser && (
-        <ShipmentModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
-      {modalState.visible && modalState.type === "fbaLiveIn" && selectedUser && (
-        <FbaLiveModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "shipmentIn" &&
+        selectedUser && (
+          <ShipmentModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
+      {modalState.visible &&
+        modalState.type === "fbaLiveIn" &&
+        selectedUser && (
+          <FbaLiveModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
     </div>
   );
 };

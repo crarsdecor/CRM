@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message } from "antd";
+import { Table, Spin, message, Input } from "antd";
 import axios from "axios";
 import moment from "moment";
 import LegalityModal from "./LegalityModal";
@@ -12,12 +12,14 @@ import UserIdPassModal from "./UserIdPassModal";
 import AccountLaunchModal from "./AccountLaunchModal";
 
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
+const { Search } = Input;
 
 const In = () => {
   const [assignedUsers, setAssignedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalState, setModalState] = useState({ visible: false, type: null });
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
 
   useEffect(() => {
     const fetchAssignedUsers = async () => {
@@ -59,6 +61,13 @@ const In = () => {
     );
   };
 
+  // Filter users based on search term
+  const filteredUsers = assignedUsers.filter((user) =>
+    user.enrollmentIdAmazon
+      ?.toLowerCase()
+      .includes(searchTerm.trim().toLowerCase())
+  );
+
   const columns = [
     {
       title: "Date (AMAZON)",
@@ -85,7 +94,12 @@ const In = () => {
       key: "legalityAmazon",
       width: 100,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "legality")}>
+        <a
+          onClick={() => handleModalOpen(record, "legality")}
+          style={{
+            color: record.legalityAmazon ? "green" : "red",
+          }}
+        >
           {record.legalityAmazon || "Not Set"}
         </a>
       ),
@@ -94,7 +108,12 @@ const In = () => {
       title: "GST",
       key: "gst",
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "gst")}>
+        <a
+          onClick={() => handleModalOpen(record, "gst")}
+          style={{
+            color: record.gst ? "green" : "red",
+          }}
+        >
           {record.gst || "Not Set"}
         </a>
       ),
@@ -111,7 +130,12 @@ const In = () => {
       key: "accountOpenIn",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountOpenIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountOpenIn")}
+          style={{
+            color: record.accountOpenIn ? "green" : "red",
+          }}
+        >
           {record.accountOpenIn || "Not Set"}
         </a>
       ),
@@ -120,7 +144,12 @@ const In = () => {
       title: "Account Status",
       key: "accountStatusIn",
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountStatusIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountStatusIn")}
+          style={{
+            color: record.accountStatusIn ? "green" : "red",
+          }}
+        >
           {record.accountStatusIn || "Not Set"}
         </a>
       ),
@@ -130,7 +159,12 @@ const In = () => {
       key: "brandName",
       width: 120,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "brandName")}>
+        <a
+          onClick={() => handleModalOpen(record, "brandName")}
+          style={{
+            color: record.brandName ? "green" : "red",
+          }}
+        >
           {record.brandName || "Not Set"}
         </a>
       ),
@@ -140,7 +174,12 @@ const In = () => {
       key: "listingsIn",
       width: 100,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "listingsIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "listingsIn")}
+          style={{
+            color: record.listingsIn ? "green" : "red",
+          }}
+        >
           {record.listingsIn || "Not Set"}
         </a>
       ),
@@ -150,7 +189,12 @@ const In = () => {
       key: "theme",
       width: 140,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "userIDPASS")}>
+        <a
+          onClick={() => handleModalOpen(record, "userIDPASS")}
+          style={{
+            color: record.amazonIdIn ? "green" : "red",
+          }}
+        >
           {record.amazonIdIn || "Not Set"}
         </a>
       ),
@@ -160,7 +204,12 @@ const In = () => {
       key: "accountLaunchIn",
       width: 160,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountLaunchIn")}
+          style={{
+            color: record.accountLaunchIn ? "green" : "red",
+          }}
+        >
           {record.accountLaunchIn || "Not Set"}
         </a>
       ),
@@ -170,7 +219,12 @@ const In = () => {
       key: "accountLaunchIn",
       width: 100,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountLaunchIn")}
+          style={{
+            color: record.accountLaunchIn ? "green" : "red",
+          }}
+        >
           {record.accountLaunchIn || "Not Set"}
         </a>
       ),
@@ -196,8 +250,15 @@ const In = () => {
 
   return (
     <div style={{ padding: "24px" }}>
+      <div className="mb-2 flex justify-start radius-lg">
+        <Input
+          placeholder="Search Enrollment ID"
+          className="w-96 rounded-lg"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <Table
-        dataSource={assignedUsers}
+        dataSource={filteredUsers}
         columns={columns}
         rowKey="_id"
         bordered

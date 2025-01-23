@@ -7,9 +7,6 @@ import ProjectedPayoutModal from "./ProjectedPayoutModal";
 import FbaModal from "./FbaModal";
 import AccountStatusModal from "./AccountStatusModal";
 
-
-
-
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const GPL = () => {
@@ -29,7 +26,9 @@ const GPL = () => {
           return;
         }
 
-        const { data } = await axios.get(`${apiUrl}/api/users?managerId=${manager.id}`);
+        const { data } = await axios.get(
+          `${apiUrl}/api/users?managerId=${manager.id}`
+        );
         setAssignedUsers(data);
       } catch (error) {
         message.error("Failed to fetch assigned users.");
@@ -58,34 +57,44 @@ const GPL = () => {
 
   const columns = [
     {
-        title: "Enrollment ID (Amazon)",
-        dataIndex: "enrollmentIdAmazon",
-        key: "enrollmentIdAmazon",
-        fixed: "left",
-        width: 200,
-      },
-      {
-        title: "Brand Name",
-        key: "brandName",
-        width: 120,
-        render: (_, record) => (
-          <a onClick={() => handleModalOpen(record, "brandName")}>
-            {record.brandName || "Not Set"}
-          </a>
-        ),
-      },
-      {
-        title: "Month",
-        dataIndex: "month",
-        key: "month",
-        width: 100,
-      },
+      title: "Enrollment ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
+      fixed: "left",
+      width: 200,
+    },
+    {
+      title: "Brand Name",
+      key: "brandName",
+      width: 120,
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "brandName")}
+          style={{
+            color: record.brandName ? "green" : "red",
+          }}
+        >
+          {record.brandName || "Not Set"}
+        </a>
+      ),
+    },
+    {
+      title: "Month",
+      dataIndex: "month",
+      key: "month",
+      width: 100,
+    },
     {
       title: "GMS",
       key: "gmsCom",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "gmsCom")}>
+        <a
+          onClick={() => handleModalOpen(record, "gmsCom")}
+          style={{
+            color: record.gmsCom ? "green" : "red",
+          }}
+        >
           {record.gmsCom || "Not Set"}
         </a>
       ),
@@ -101,7 +110,12 @@ const GPL = () => {
       key: "projectedPayoutCom",
       width: 130,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "projectedPayoutCom")}>
+        <a
+          onClick={() => handleModalOpen(record, "projectedPayoutCom")}
+          style={{
+            color: record.projectedPayoutCom ? "green" : "red",
+          }}
+        >
           {record.projectedPayoutCom || "Not Set"}
         </a>
       ),
@@ -111,7 +125,12 @@ const GPL = () => {
       key: "fbaCom",
       width: 120,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "fbaCom")}>
+        <a
+          onClick={() => handleModalOpen(record, "fbaCom")}
+          style={{
+            color: record.fbaCom ? "green" : "red",
+          }}
+        >
           {record.fbaCom || "Not Set"}
         </a>
       ),
@@ -121,7 +140,12 @@ const GPL = () => {
       key: "accountStatusGplCom",
       width: 140,
       render: (_, record) => (
-        <a onClick={() => handleModalOpen(record, "accountStatusGplCom")}>
+        <a
+          onClick={() => handleModalOpen(record, "accountStatusGplCom")}
+          style={{
+            color: record.accountStatusGplCom ? "green" : "red",
+          }}
+        >
           {record.accountStatusGplCom || "Not Set"}
         </a>
       ),
@@ -130,20 +154,34 @@ const GPL = () => {
       title: "Remark",
       key: "accountLaunchIn",
       width: 100,
-    //   render: (_, record) => (
-    //     <a onClick={() => handleModalOpen(record, "accountLaunchIn")}>
-    //       {record.accountLaunchIn || "Not Set"}
-    //     </a>
-    //   ),
+      render: (_, record) => (
+        <a
+          onClick={() => handleModalOpen(record, "accountLaunchIn")}
+          style={{
+            color: record.accountLaunchIn ? "green" : "red",
+          }}
+        >
+          {record.accountLaunchIn || "Not Set"}
+        </a>
+      ),
     },
   ];
 
   if (loading) {
-    return <Spin size="large" style={{ display: "flex", justifyContent: "center", marginTop: "20%" }} />;
+    return (
+      <Spin
+        size="large"
+        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
+      />
+    );
   }
 
   if (assignedUsers.length === 0) {
-    return <h3 style={{ textAlign: "center", marginTop: "20%" }}>No users assigned to you yet.</h3>;
+    return (
+      <h3 style={{ textAlign: "center", marginTop: "20%" }}>
+        No users assigned to you yet.
+      </h3>
+    );
   }
 
   return (
@@ -153,17 +191,20 @@ const GPL = () => {
         columns={columns}
         rowKey="_id"
         bordered
-        scroll={{ x: "max-content", y: 400 }}
+        scroll={{ x: "max-content", y: 800 }}
+        pagination={{ pageSize: 100 }}
         sticky
       />
-      {modalState.visible && modalState.type === "brandName" && selectedUser && (
-        <BrandModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "brandName" &&
+        selectedUser && (
+          <BrandModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
       {modalState.visible && modalState.type === "gmsCom" && selectedUser && (
         <GmsModal
           user={selectedUser}
@@ -172,14 +213,16 @@ const GPL = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "projectedPayoutCom" && selectedUser && (
-        <ProjectedPayoutModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "projectedPayoutCom" &&
+        selectedUser && (
+          <ProjectedPayoutModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
       {modalState.visible && modalState.type === "fbaCom" && selectedUser && (
         <FbaModal
           user={selectedUser}
@@ -188,14 +231,16 @@ const GPL = () => {
           onUpdate={handleUpdateUser}
         />
       )}
-      {modalState.visible && modalState.type === "accountStatusGplCom" && selectedUser && (
-        <AccountStatusModal
-          user={selectedUser}
-          visible={modalState.visible}
-          onClose={handleModalClose}
-          onUpdate={handleUpdateUser}
-        />
-      )}
+      {modalState.visible &&
+        modalState.type === "accountStatusGplCom" &&
+        selectedUser && (
+          <AccountStatusModal
+            user={selectedUser}
+            visible={modalState.visible}
+            onClose={handleModalClose}
+            onUpdate={handleUpdateUser}
+          />
+        )}
     </div>
   );
 };
