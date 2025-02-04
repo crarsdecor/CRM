@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Upload } from "antd";
+import { Button, message, Upload, Input } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
-import * as XLSX from "xlsx"; // Import xlsx for Excel generation
+import * as XLSX from "xlsx";
 import axios from "axios";
 import UserModal from "./UserModal";
 import UserTable from "./UserTable";
-import Password from "antd/es/input/Password";
 
+const { Search } = Input;
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const UserTab = () => {
@@ -14,6 +14,7 @@ const UserTab = () => {
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -61,16 +62,13 @@ const UserTab = () => {
   const handleCsvUpload = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       setLoading(true);
       await axios.post(`${apiUrl}/api/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
       message.success("CSV uploaded successfully");
-      fetchUsers(); // Refresh users after upload
+      fetchUsers();
     } catch (error) {
       message.error("Failed to upload CSV");
     } finally {
@@ -80,25 +78,22 @@ const UserTab = () => {
 
   const handleDownloadExcel = () => {
     try {
-      // Format users' data for Excel
       const data = users.map((user) => ({
         Name: user.name,
         UID: user.uid,
-        Password: user.password,
+        "Enrollment ID Website": user.enrollmentIdWebsite,
+        "Enrollment ID Amazon": user.enrollmentIdAmazon,
         Email: user.email,
+        "Primary Contact": user.primaryContact,
         Role: user.role,
         Manager:
           user.managers.length > 0
-            ? user.managers.map((manager) => manager.name).join(", ") // Get manager names
+            ? user.managers.map((manager) => manager.name).join(", ")
             : "N/A",
       }));
-
-      // Create a new workbook and worksheet
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
-
-      // Generate Excel file and trigger download
       XLSX.writeFile(workbook, "UsersData.xlsx");
       message.success("Excel file downloaded successfully");
     } catch (error) {
@@ -106,20 +101,29 @@ const UserTab = () => {
     }
   };
 
+  const filteredUsers = users.filter((user) =>
+    [
+      user.uid,
+      user.enrollmentIdWebsite,
+      user.enrollmentIdAmazon,
+      user.name,
+      user.email,
+      user.primaryContact,
+    ]
+      .filter(Boolean) // Remove undefined/null values
+      .some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <div>
-      <div style={{ marginBottom: 20 }}>
-        <Button
-          type="primary"
-          onClick={() => setIsModalVisible(true)}
-          style={{ marginRight: 10 }}
-        >
+      <div style={{ marginBottom: 20, display: "flex", gap: "10px" }}>
+        <Button type="primary" onClick={() => setIsModalVisible(true)}>
           Add User
         </Button>
         <Upload
           beforeUpload={(file) => {
             handleCsvUpload(file);
-            return false; // Prevent auto upload by Ant Design
+            return false;
           }}
           accept=".csv"
           showUploadList={false}
@@ -132,13 +136,19 @@ const UserTab = () => {
           type="default"
           icon={<DownloadOutlined />}
           onClick={handleDownloadExcel}
-          style={{ marginLeft: 10 }}
         >
           Download Excel
         </Button>
+        <Search
+          placeholder="Search users..."
+          allowClear
+          enterButton
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ width: 300 }}
+        />
       </div>
       <UserTable
-        users={users}
+        users={filteredUsers}
         managers={managers}
         handleDeleteUser={handleDeleteUser}
         handleAssignManagers={handleAssignManagers}
