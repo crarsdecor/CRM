@@ -115,7 +115,7 @@ const ManagerDashboard = () => {
             ),
           },
         ]
-      : service === "WEBSITE"
+      : service === "Website"
       ? [
           {
             label: "Website",
