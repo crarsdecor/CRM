@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 import { User, ROLES } from "../model/userModel.js";
 
 const SECRET_KEY = process.env.JWT_SECRET || "saumic";
@@ -92,34 +94,57 @@ export const signupAdmin = async (req, res) => {
 //   }
 // };
 
+dotenv.config();
+
+const otpStore = new Map(); // Temporary in-memory OTP storage
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 export const signin = async (req, res) => {
   try {
     const { uid, password } = req.body;
+    console.log(uid, password);
 
-    // Ensure both uid and password are provided
     if (!uid || !password) {
       return res.status(400).json({ message: "UID and password are required" });
     }
 
-    // Find user by UID
     const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if the provided password matches (plain text comparison)
     if (user.password !== password) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // OTP valid for 5 minutes
 
-    res
-      .status(200)
-      .json({ token, role: user.role, message: "Signin successful" });
+    otpStore.set(uid, { otp, expiresAt });
+
+    setTimeout(() => otpStore.delete(uid), 5 * 60 * 1000);
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: "mdfaizahmad1020@gmail.com",
+      subject: "Your OTP for Login",
+      text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      message: "OTP sent to your email",
+      uid: user.uid,
+      role: user.role,
+    });
   } catch (error) {
     res
       .status(500)
@@ -127,11 +152,50 @@ export const signin = async (req, res) => {
   }
 };
 
+export const verifyOtp = async (req, res) => {
+  try {
+    const { uid, otp } = req.body;
+
+    if (!otpStore.has(uid)) {
+      return res.status(400).json({ message: "OTP expired or not found" });
+    }
+
+    const storedOtp = otpStore.get(uid);
+
+    if (String(storedOtp.otp) !== String(otp)) {
+      return res.status(401).json({ message: "Invalid OTP" });
+    }
+
+    if (Date.now() > storedOtp.expiresAt) {
+      otpStore.delete(uid);
+      return res.status(400).json({ message: "OTP expired" });
+    }
+
+    otpStore.delete(uid);
+
+    const user = await User.findOne({ uid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res
+      .status(200)
+      .json({ token, role: user.role, message: "OTP verified successfully!" });
+  } catch (error) {
+    console.error("Error verifying OTP:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error verifying OTP", error: error.message });
+  }
+};
+
 // Create role (static roles, admin-only)
 export const createRole = async (req, res) => {
-  res
-    .status(405)
-    .json({
-      message: "Dynamic role creation is not supported in this implementation.",
-    });
+  res.status(405).json({
+    message: "Dynamic role creation is not supported in this implementation.",
+  });
 };
