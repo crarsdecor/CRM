@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import axios from "axios";
@@ -17,6 +17,20 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [step, setStep] = useState(1); // 1: Login, 2: OTP Verification
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    console.log(role);
+    if (role === "admin") {
+      navigate("/dashboard-admin");
+    } else if (role === "manager") {
+      navigate("/dashboard-manager");
+    } else if (role === "user") {
+      navigate("/dashboard-user");
+    } else if (role === "accountant") {
+      navigate("/dashboard-accountant");
+    }
+  }, []);
 
   const handleInputChange = (setter) => (e) => {
     setter(e.target.value);
@@ -37,10 +51,10 @@ const Signin = () => {
         password,
       });
 
-      // Save user info in local storage
+      // // Save user info in local storage
       localStorage.setItem("uid", data.uid);
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.role);
+      // localStorage.setItem("token", data.token);
+      // localStorage.setItem("role", data.role);
 
       setStep(2); // Move to OTP verification step
       setError("");
@@ -70,6 +84,7 @@ const Signin = () => {
 
       // Update token in local storage
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
       message.success(data.message);
 
       // Redirect based on role

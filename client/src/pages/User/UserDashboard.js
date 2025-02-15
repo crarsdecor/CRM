@@ -6,6 +6,7 @@ import AmazonDashboard from "./AMAZON/AmazonDashboard";
 import WebsiteDashboard from "./WEBSITE/WebsiteDashboard";
 import axios from "axios";
 import "./UserDashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
@@ -14,6 +15,7 @@ const { Title, Text } = Typography;
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const UserDashboard = () => {
+  const navigate = useNavigate();
   const [enrollmentIdAmazon, setEnrollmentIdAmazon] = useState(null);
   const [enrollmentIdWebsite, setEnrollmentIdWebsite] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ const UserDashboard = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.reload();
+    navigate("/signin");
   };
 
   if (loading) {

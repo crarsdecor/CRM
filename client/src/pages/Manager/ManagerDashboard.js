@@ -14,6 +14,7 @@ import Operations from "./AMAZON/Operations/Operations";
 import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
 import "./ManagerDashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const { Content, Footer } = Layout;
 const { Title, Text } = Typography;
@@ -21,6 +22,8 @@ const { Title, Text } = Typography;
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const ManagerDashboard = () => {
+  const navigate = useNavigate();
+
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,7 +50,7 @@ const ManagerDashboard = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.reload();
+    navigate("/signin");
   };
 
   if (loading) {
