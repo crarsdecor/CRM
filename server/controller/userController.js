@@ -215,6 +215,37 @@ export const updateUser = async (req, res) => {
       delete updates.managerIds; // Remove from updates to avoid overriding unintentionally
     }
 
+    // Handle accountOpenIn and accountOpenCom with the specific reason fields
+    if (updates.hasOwnProperty("accountOpenIn")) {
+      if (updates.accountOpenIn === false && !updates.accountOpenInReason) {
+        return res.status(400).json({
+          message:
+            "Reason is required when marking Account Open In as Not Done.",
+        });
+      }
+      user.accountOpenIn = updates.accountOpenIn;
+      user.reasonIn = updates.accountOpenInReason || ""; // Assign the reason from 'accountOpenInReason'
+      // If a reason is provided, set accountOpenIn to false automatically
+      if (updates.accountOpenInReason) {
+        user.accountOpenIn = false;
+      }
+    }
+
+    if (updates.hasOwnProperty("accountOpenCom")) {
+      if (updates.accountOpenCom === false && !updates.accountOpenComReason) {
+        return res.status(400).json({
+          message:
+            "Reason is required when marking Account Open Com as Not Done.",
+        });
+      }
+      user.accountOpenCom = updates.accountOpenCom;
+      user.reasonCom = updates.accountOpenComReason || ""; // Assign the reason from 'accountOpenComReason'
+      // If a reason is provided, set accountOpenCom to false automatically
+      if (updates.accountOpenComReason) {
+        user.accountOpenCom = false;
+      }
+    }
+
     // Update user with the provided fields
     Object.assign(user, updates);
 
@@ -222,6 +253,58 @@ export const updateUser = async (req, res) => {
 
     res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateListings = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { listingsCountIn, listingsCountCom } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (listingsCountIn !== undefined) user.listingsCountIn = listingsCountIn;
+    if (listingsCountCom !== undefined)
+      user.listingsCountCom = listingsCountCom;
+
+    await user.save();
+
+    res.status(200).json({ message: "Listings updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update FBA IN or FBA COM status
+export const updateFbaStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const body = req.body;
+
+    const field = Object.keys(body)[0];
+    const status = body[field];
+
+    if (!["fbaIn", "fbaCom"].includes(field)) {
+      return res.status(400).json({ message: "Invalid field update request" });
+    }
+
+    const booleanStatus = status === "Yes";
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user[field] = booleanStatus;
+    await user.save();
+
+    res.status(200).json({ message: `${field} updated successfully`, user });
+  } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ message: error.message });
   }
 };

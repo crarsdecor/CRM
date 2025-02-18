@@ -67,7 +67,7 @@ const runMonthlyTask = async () => {
     // Send Email with CSV attachment
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: "mdfaizahmad1020@gmail.com",
+      to: "saccout64@gmail.com",
       subject: "Monthly User Data Report",
       text: "Attached is the CSV report of all users.",
       attachments: [{ filename: "users.csv", path: filePath }],
@@ -85,7 +85,7 @@ const runMonthlyTask = async () => {
 
 // Schedule the task to run at 00:00 on the 1st of every month
 cron.schedule(
-  "0 0 16 * *",
+  "0 0 19 * *",
   () => {
     runMonthlyTask();
   },

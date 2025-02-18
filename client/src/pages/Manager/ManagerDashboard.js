@@ -1,223 +1,396 @@
 import React, { useEffect, useState } from "react";
-import { Tabs, Button, Spin, Layout, Typography, Space } from "antd";
-import AmazonPasswords from "./AMAZON/Passwords/AmazonPasswords";
+import {
+  Table,
+  Button,
+  Layout,
+  Typography,
+  message,
+  Modal,
+  Switch,
+  Input,
+  Select,
+} from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import AmazonDashboard from "./AMAZON/AmazonDashboard";
-import WebsiteDashboard from "./WEBSITE/WebsiteDashboard";
-import Main from "./WEBSITE/Main/Main";
-import Stage1Website from "./WEBSITE/Stage1/Stage1Website";
-import Stage2Website from "./WEBSITE/Stage2/Stage2Website";
-import Stage3Website from "./WEBSITE/Stage3/Stage3Website";
-import Archive from "./WEBSITE/Archive/Archive";
-import Operations from "./AMAZON/Operations/Operations";
-import Growth from "./AMAZON/Growth/Growth";
 import axios from "axios";
-import "./ManagerDashboard.css";
 import { useNavigate } from "react-router-dom";
 
-const { Content, Footer } = Layout;
-const { Title, Text } = Typography;
+const { Content } = Layout;
+const { Title } = Typography;
+const { Option } = Select;
 
 const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
-
-  const [service, setService] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [updateField, setUpdateField] = useState("");
+  const [status, setStatus] = useState(false);
+  const [reason, setReason] = useState("");
+  const [listingsModalVisible, setListingsModalVisible] = useState(false);
+  const [listingsValue, setListingsValue] = useState("");
+  const [fbaModalVisible, setFbaModalVisible] = useState(false);
+  const [fbaField, setFbaField] = useState("");
+  const [fbaStatus, setFbaStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (user && user.id) {
-      axios
-        .get(`${apiUrl}/api/users/${user.id}`)
-        .then((response) => {
-          setService(response.data.service);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError("Failed to fetch user data");
-          setLoading(false);
-        });
-    } else {
-      setError("No user data found in local storage");
+  const fetchAssignedUsers = async () => {
+    try {
+      const manager = JSON.parse(localStorage.getItem("user"));
+      if (!manager || !manager.id) {
+        message.error("Manager data not found. Please log in again.");
+        return;
+      }
+      const { data } = await axios.get(
+        `${apiUrl}/api/users?managerId=${manager.id}`
+      );
+      setUsers(data);
+      setFilteredUsers(data); // Initialize filtered users
+    } catch (error) {
+      message.error("Failed to fetch assigned users.");
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchAssignedUsers();
   }, []);
 
+  // Handle logout
   const handleLogout = () => {
     localStorage.clear();
     navigate("/signin");
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
-      >
-        <Spin size="large" />
-      </div>
-    );
-  }
+  const handleOpenModal = (user, field) => {
+    setSelectedUser(user);
+    setUpdateField(field);
+    setStatus(user[field] === "true");
 
-  if (error) {
-    return (
-      <div
-        style={{ display: "flex", justifyContent: "center", marginTop: "20%" }}
-      >
-        <Title level={4} type="danger">
-          {error}
-        </Title>
-      </div>
-    );
-  }
+    // Adjust reason field dynamically
+    setReason(user[`reason${field.replace("accountOpen", "")}`] || "");
 
-  const tabsItems =
-    service === "Amazon"
-      ? [
-          {
-            label: "Amazon",
-            key: "1",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <AmazonDashboard />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Operations",
-            key: "2",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Operations />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Growth",
-            key: "3",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Growth />
-              </motion.div>
-            ),
-          },
-        ]
-      : service === "Website"
-      ? [
-          {
-            label: "Website",
-            key: "4",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <WebsiteDashboard />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Main",
-            key: "5",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Main />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Stage 1 (WEBSITE)",
-            key: "6",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Stage1Website />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Stage 2 (WEBSITE)",
-            key: "7",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Stage2Website />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Stage 3 (WEBSITE)",
-            key: "8",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Stage3Website />
-              </motion.div>
-            ),
-          },
-          {
-            label: "Archive",
-            key: "9",
-            children: (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Archive />
-              </motion.div>
-            ),
-          },
-        ]
-      : [];
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedUser(null);
+    setUpdateField("");
+  };
+
+  const handleOpenFbaModal = (user, field) => {
+    setSelectedUser(user);
+    setFbaField(field);
+    setFbaStatus(user[field] === "true" ? "Yes" : "No");
+    setFbaModalVisible(true);
+  };
+
+  const handleCloseFbaModal = () => {
+    setFbaModalVisible(false);
+    setSelectedUser(null);
+    setFbaField("");
+  };
+
+  const handleSaveFbaStatus = async () => {
+    try {
+      await axios.put(`${apiUrl}/api/users/updatefba/${selectedUser._id}`, {
+        [fbaField]: fbaStatus,
+      });
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === selectedUser._id
+            ? { ...user, [fbaField]: fbaStatus }
+            : user
+        )
+      );
+      message.success("FBA status updated successfully.");
+      fetchAssignedUsers();
+      handleCloseFbaModal();
+    } catch (error) {
+      message.error("Failed to update FBA status.");
+    }
+  };
+
+  const handleOpenListingsModal = (user, field) => {
+    setSelectedUser(user);
+    setUpdateField(field);
+    setListingsModalVisible(true);
+  };
+
+  const handleCloseListingsModal = () => {
+    setListingsModalVisible(false);
+    setSelectedUser(null);
+    setUpdateField("");
+    setListingsValue("");
+  };
+
+  const handleSaveListings = async () => {
+    if (!listingsValue) {
+      message.error("Please enter a value.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${apiUrl}/api/users/update-listing/${selectedUser._id}`,
+        {
+          [updateField]: listingsValue,
+        }
+      );
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === selectedUser._id
+            ? { ...user, [updateField]: listingsValue }
+            : user
+        )
+      );
+      message.success("Listings updated successfully.");
+      fetchAssignedUsers();
+      handleCloseListingsModal();
+    } catch (error) {
+      message.error("Failed to update listings.");
+    }
+  };
+
+  const handleSave = async () => {
+    if (!status && !reason) {
+      message.error("Reason is required if status is 'Not Done'.");
+      return;
+    }
+
+    try {
+      await axios.put(`${apiUrl}/api/users/${selectedUser._id}`, {
+        [updateField]: status,
+        [`${updateField}Reason`]: status ? "" : reason,
+      });
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === selectedUser.id
+            ? {
+                ...user,
+                [updateField]: status,
+                [`${updateField}Reason`]: reason,
+              }
+            : user
+        )
+      );
+      message.success("Status updated successfully.");
+      handleCloseModal();
+      fetchAssignedUsers();
+    } catch (error) {
+      message.error("Failed to update status.");
+    }
+  };
+
+  // Filter users based on search query
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    const filteredData = users.filter((user) => {
+      // Ensure the fields are not undefined and convert them to lowercase
+      const enrollmentIdAmazon = user.enrollmentIdAmazon || ""; // Default to empty string if undefined
+      const enrollmentIdWebsite = user.enrollmentIdWebsite || ""; // Default to empty string if undefined
+
+      return (
+        enrollmentIdAmazon.toLowerCase().includes(query.toLowerCase()) ||
+        enrollmentIdWebsite.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+
+    setFilteredUsers(filteredData);
+  };
+
+  const columns = [
+    {
+      title: "E.ID (Amazon)",
+      dataIndex: "enrollmentIdAmazon",
+      key: "enrollmentIdAmazon",
+      // Add filter for Amazon ID
+    },
+    {
+      title: "E.ID (Website)",
+      dataIndex: "enrollmentIdWebsite",
+      key: "enrollmentIdWebsite",
+    },
+    {
+      title: "Account Open In",
+      dataIndex: "accountOpenIn",
+      key: "accountOpenIn",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleOpenModal(record, "accountOpenIn")}
+        >
+          {record.accountOpenIn === "true" ? (
+            <span className="text-green-500">Done</span>
+          ) : (
+            <span className="text-red-500">Not Done</span>
+          )}
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done"
+          ? record.accountOpenIn === "true"
+          : record.accountOpenIn !== "true",
+    },
+    {
+      title: "Account Open Com",
+      dataIndex: "accountOpenCom",
+      key: "accountOpenCom",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleOpenModal(record, "accountOpenCom")}
+        >
+          {record.accountOpenCom === "true" ? (
+            <span className="text-green-500">Done</span>
+          ) : (
+            <span className="text-red-500">Not Done</span>
+          )}
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done"
+          ? record.accountOpenCom === "true"
+          : record.accountOpenCom !== "true",
+    },
+    {
+      title: "Listings Count In",
+      dataIndex: "listingsCountIn",
+      key: "listingsCountIn",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleOpenListingsModal(record, "listingsCountIn")}
+        >
+          <span className="text-green-500">
+            {record.listingsCountIn || (
+              <span className="text-red-500">Not Done</span>
+            )}
+          </span>
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done"
+          ? record.listingsCountIn > 0
+          : record.listingsCountIn === 0,
+    },
+    {
+      title: "Listings Count Com",
+      dataIndex: "listingsCountCom",
+      key: "listingsCountCom",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleOpenListingsModal(record, "listingsCountCom")}
+        >
+          <span className="text-green-500">
+            {record.listingsCountCom || (
+              <span className="text-red-500">Not Done</span>
+            )}
+          </span>
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done"
+          ? record.listingsCountCom > 0
+          : record.listingsCountCom === 0,
+    },
+    {
+      title: "FBA IN",
+      dataIndex: "fbaIn",
+      key: "fbaIn",
+      render: (_, record) => (
+        <Button type="link" onClick={() => handleOpenFbaModal(record, "fbaIn")}>
+          {record.fbaIn === "true" ? (
+            <span className="text-green-500">Done</span>
+          ) : (
+            <span className="text-red-500">Not Done</span>
+          )}
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done" ? record.fbaIn === "true" : record.fbaIn !== "true",
+    },
+    {
+      title: "FBA COM",
+      dataIndex: "fbaCom",
+      key: "fbaCom",
+      render: (_, record) => (
+        <Button
+          type="link"
+          onClick={() => handleOpenFbaModal(record, "fbaCom")}
+        >
+          {record.fbaCom === "true" ? (
+            <span className="text-green-500">Done</span>
+          ) : (
+            <span className="text-red-500">Not Done</span>
+          )}
+        </Button>
+      ),
+      // Add filter for "Done" / "Not Done"
+      filters: [
+        { text: "Done", value: "Done" },
+        { text: "Not Done", value: "Not Done" },
+      ],
+      onFilter: (value, record) =>
+        value === "Done" ? record.fbaCom === "true" : record.fbaCom !== "true",
+    },
+  ];
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f4f4f4" }}>
+    <Layout style={{ minHeight: "100vh", background: "#f4f4f4", padding: 20 }}>
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="header-container"
+        style={{ marginBottom: 20 }}
       >
-        <div className="header-content">
-          <Title
-            level={3}
-            style={{
-              color: "#fff",
-              margin: 0,
-              textShadow: "2px 2px 4px rgba(0,0,0,0.6)",
-            }}
-          >
+        <div
+          className="header-content"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Title level={3} style={{ margin: 0, color: "white" }}>
             Manager Dashboard
           </Title>
           <Button
@@ -230,53 +403,72 @@ const ManagerDashboard = () => {
           </Button>
         </div>
       </motion.div>
-      <Content
-        style={{
-          padding: "24px",
-          width: "100%",
-          overflowX: "auto",
-          paddingTop: "4rem",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Tabs
-            defaultActiveKey={tabsItems[0]?.key || "1"}
-            tabBarStyle={{ marginBottom: "24px" }}
-            size="large"
-            items={tabsItems}
-          />
-        </motion.div>
+
+      <Content className="mt-12">
+        <Input
+          className="rounded-lg mt-4"
+          placeholder="Search by Enrollment ID (Amazon or Website)"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          style={{ marginBottom: 20, width: 300 }}
+        />
+        <Table
+          columns={columns}
+          dataSource={filteredUsers}
+          loading={loading}
+          rowKey="id"
+          pagination={{ pageSize: 100 }}
+          bordered
+        />
       </Content>
-      <Footer
-        style={{
-          textAlign: "center",
-        }}
+
+      <Modal
+        visible={modalVisible}
+        onCancel={handleCloseModal}
+        onOk={handleSave}
+        title="Update Status"
       >
-        <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
-          <Text
-            style={{
-              color: "#001529",
-              fontWeight: "500",
-              fontSize: "14px",
-            }}
-          >
-            Saumic Craft ©2024
-          </Text>
-          <Text
-            style={{
-              color: "#1890ff",
-              fontWeight: "500",
-              fontSize: "14px",
-            }}
-          >
-            Powered by
-          </Text>
-        </Space>
-      </Footer>
+        <Switch
+          checked={status}
+          onChange={(checked) => setStatus(checked)} // Update the status based on toggle
+        />
+        <span style={{ marginLeft: 10 }} />
+        {!status && (
+          <Input
+            placeholder="Enter Reason"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            style={{ marginTop: 10 }}
+          />
+        )}
+      </Modal>
+      <Modal
+        visible={listingsModalVisible}
+        onCancel={handleCloseListingsModal}
+        onOk={handleSaveListings}
+        title="Update Listings"
+      >
+        <Input
+          placeholder="Enter Listings Count"
+          value={listingsValue}
+          onChange={(e) => setListingsValue(e.target.value)}
+        />
+      </Modal>
+      <Modal
+        visible={fbaModalVisible}
+        onCancel={handleCloseFbaModal}
+        onOk={handleSaveFbaStatus}
+        title={`Update ${fbaField === "fbaIn" ? "FBA IN" : "FBA COM"} Status`}
+      >
+        <Select
+          value={fbaStatus}
+          onChange={(value) => setFbaStatus(value)}
+          style={{ width: "100%" }}
+        >
+          <Option value="Yes">Yes</Option>
+          <Option value="No">No</Option>
+        </Select>
+      </Modal>
     </Layout>
   );
 };
