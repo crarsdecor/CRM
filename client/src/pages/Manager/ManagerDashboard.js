@@ -212,6 +212,19 @@ const ManagerDashboard = () => {
 
   const columns = [
     {
+      title: "UID",
+      dataIndex: "uid",
+      key: "uid",
+      render: (_, record) => (
+        <span className="bg-blue-100 p-1">{record.uid}</span>
+      ),
+    },
+    {
+      title: "PASSWORD",
+      dataIndex: "password",
+      key: "password",
+    },
+    {
       title: "E.ID (Amazon)",
       dataIndex: "enrollmentIdAmazon",
       key: "enrollmentIdAmazon",
