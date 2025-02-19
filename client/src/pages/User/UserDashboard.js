@@ -7,6 +7,7 @@ import WebsiteDashboard from "./WEBSITE/WebsiteDashboard";
 import axios from "axios";
 import "./UserDashboard.css";
 import { useNavigate } from "react-router-dom";
+import UserDash from "./UserDash";
 
 const { TabPane } = Tabs;
 const { Content, Footer } = Layout;
@@ -106,7 +107,8 @@ const UserDashboard = () => {
           paddingTop: "4rem",
         }}
       >
-        <motion.div
+        <UserDash />
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -143,7 +145,7 @@ const UserDashboard = () => {
               </>
             )}
           </Tabs>
-        </motion.div>
+        </motion.div> */}
       </Content>
       <Footer style={{ textAlign: "center" }}>
         <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
@@ -155,7 +157,7 @@ const UserDashboard = () => {
           <Text
             style={{ color: "#1890ff", fontWeight: "500", fontSize: "14px" }}
           >
-            Powered by CreativeAvi
+            Powered SaumicCraft
           </Text>
         </Space>
       </Footer>

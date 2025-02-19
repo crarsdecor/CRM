@@ -50,19 +50,54 @@ const Signin = () => {
         uid,
         password,
       });
+      console.log("data from backend", data);
 
-      // // Save user info in local storage
       localStorage.setItem("uid", data.uid);
-      // localStorage.setItem("token", data.token);
-      // localStorage.setItem("role", data.role);
 
-      setStep(2); // Move to OTP verification step
+      if (data.role === "user") {
+        // Decode token and set user state
+        const decoded = jwtDecode(data.token);
+        setUser({ id: decoded.id, role: decoded.role });
+
+        // Save token and role in local storage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+
+        message.success(data.message);
+        navigate("/dashboard-user");
+      } else {
+        // Move to OTP verification step for other roles
+        setStep(2);
+      }
+
       setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Sign-in failed");
       message.error(err.response?.data?.message);
     }
   };
+
+  // const handleSignin = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const { data } = await axios.post(`${apiUrl}/api/auth/signin`, {
+  //       uid,
+  //       password,
+  //     });
+  //     console.log("data from backend", data);
+
+  //     // // Save user info in local storage
+  //     localStorage.setItem("uid", data.uid);
+  //     // localStorage.setItem("token", data.token);
+  //     // localStorage.setItem("role", data.role);
+
+  //     setStep(2); // Move to OTP verification step
+  //     setError("");
+  //   } catch (err) {
+  //     setError(err.response?.data?.message || "Sign-in failed");
+  //     message.error(err.response?.data?.message);
+  //   }
+  // };
 
   const handleOtpVerify = async (e) => {
     e.preventDefault();

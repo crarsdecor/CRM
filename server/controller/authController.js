@@ -139,11 +139,15 @@ export const signin = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
+    const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
     res.status(200).json({
       message: "OTP sent to your email",
       uid: user.uid,
       role: user.role,
+      token,
     });
   } catch (error) {
     res
