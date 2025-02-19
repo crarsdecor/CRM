@@ -107,8 +107,7 @@ const UserDashboard = () => {
           paddingTop: "4rem",
         }}
       >
-        <UserDash />
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -126,7 +125,8 @@ const UserDashboard = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <AmazonDashboard />
+                    {/* <AmazonDashboard /> */}
+                    <UserDash />
                   </motion.div>
                 </TabPane>
               </>
@@ -145,7 +145,7 @@ const UserDashboard = () => {
               </>
             )}
           </Tabs>
-        </motion.div> */}
+        </motion.div>
       </Content>
       <Footer style={{ textAlign: "center" }}>
         <Space split={<span style={{ color: "#d9d9d9" }}>|</span>}>
